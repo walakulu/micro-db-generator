@@ -6,7 +6,8 @@ public interface RuleGroupService {
 
 	SuspiciousReportsDto findUnusualPaymentsForGoodOrService(String databaseName);
 
-    SuspiciousReportsDto findUnusualPaymentsReceive(String databaseName);
+	SuspiciousReportsDto findUnusualPaymentsReceive(String databaseName);
 
-    SuspiciousReportsDto findUnusualSmallFeeTransfer(String databaseName);
+	SuspiciousReportsDto findUnusualSmallFeeTransfer(String databaseName);
+
 }

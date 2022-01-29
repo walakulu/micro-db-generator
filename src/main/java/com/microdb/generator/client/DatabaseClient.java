@@ -12,15 +12,19 @@ public interface DatabaseClient {
 	List<SuspiciousTransactionGroupModel> findUnusualPaymentsForGoodOrService(String databaseName, String today,
 			String groupDays);
 
-	List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int origAccId, int beneAccId, String txnType,
-															  String today, String groupDays);
+	List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int origAccId, int beneAccId,
+			String txnType, String today, String groupDays);
 
 	List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int beneAccId, String txnType,
-															  String today, String groupDays);
+			String today, String groupDays);
 
-    List<SuspiciousTransactionGroupModel> findUnusualPaymentReceive(String databaseName, String startDate, String groupDays);
+	List<SuspiciousTransactionGroupModel> findUnusualPaymentReceive(String databaseName, String startDate,
+			String groupDays);
 
-	List<SuspiciousTransactionGroupModel> findUnusualSmallFeeTransfer(String databaseName, String startDate, String twoWeekGroup);
+	List<SuspiciousTransactionGroupModel> findUnusualSmallFeeTransfer(String databaseName, String startDate,
+			String twoWeekGroup);
 
-	List<TransactionModel> findTransactionBySenderAccountId(String databaseName, int origAccId, String txnType, String today, String groupDays);
+	List<TransactionModel> findTransactionBySenderAccountId(String databaseName, int origAccId, String txnType,
+			String today, String groupDays);
+
 }

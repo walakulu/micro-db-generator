@@ -99,8 +99,8 @@ public class JdbcClient implements DatabaseClient {
 	}
 
 	@Override
-	public List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int origAccId, int beneAccId, String txnType,
-																	 String today, String groupDays) {
+	public List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int origAccId, int beneAccId,
+			String txnType, String today, String groupDays) {
 		List<TransactionModel> transactionModels = new ArrayList<>();
 		String dateRange = "DATE_SUB('" + today + "',INTERVAL " + groupDays + ") AND '" + today + "' ";
 
@@ -132,16 +132,17 @@ public class JdbcClient implements DatabaseClient {
 	}
 
 	@Override
-	public List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int beneAccId, String txnType, String today, String groupDays) {
+	public List<TransactionModel> findTransactionByReceiverAccountId(String databaseName, int beneAccId, String txnType,
+			String today, String groupDays) {
 		List<TransactionModel> transactionModels = new ArrayList<>();
 		String dateRange = "DATE_SUB('" + today + "',INTERVAL " + groupDays + ") AND '" + today + "' ";
 
 		String find_transactions = new StringBuilder(
 				"SELECT txn.txn_id, txn.orig_acc, txn.bene_acc,txnType.type as txnType ")
-				.append("FROM Transaction txn ").append("INNER JOIN Transaction_Type txnType ")
-				.append("ON txn.txn_type_id=txnType.id ").append("WHERE txn_timestamp BETWEEN ")
-				.append(dateRange).append(" AND txn.bene_acc=")
-				.append(beneAccId).append(" AND txnType.type='TRANSFER'").toString();
+						.append("FROM Transaction txn ").append("INNER JOIN Transaction_Type txnType ")
+						.append("ON txn.txn_type_id=txnType.id ").append("WHERE txn_timestamp BETWEEN ")
+						.append(dateRange).append(" AND txn.bene_acc=").append(beneAccId)
+						.append(" AND txnType.type='TRANSFER'").toString();
 
 		try {
 			Connection connection = getDatabaseConnection(databaseName);
@@ -164,16 +165,17 @@ public class JdbcClient implements DatabaseClient {
 	}
 
 	@Override
-	public List<SuspiciousTransactionGroupModel> findUnusualPaymentReceive(String databaseName, String startDate, String groupDays) {
+	public List<SuspiciousTransactionGroupModel> findUnusualPaymentReceive(String databaseName, String startDate,
+			String groupDays) {
 		List<SuspiciousTransactionGroupModel> suspiciousTransactionGroups = new ArrayList<>();
 		String dateRange = "DATE_SUB('" + startDate + "',INTERVAL " + groupDays + ") AND '" + startDate + "' ";
 
 		String find_unusual_payers = new StringBuilder(
-				"SELECT txn.bene_acc,count(*) as frequency,txnType.type as txnType ")
-				.append("FROM Transaction txn ").append("INNER JOIN Transaction_Type txnType ")
-				.append("ON txn.txn_type_id=txnType.id ").append("WHERE txn_timestamp BETWEEN ")
-				.append(dateRange).append("GROUP BY txn.bene_acc,txnType.type ")
-				.append("HAVING COUNT(txn.bene_acc) > 10 ").append(" AND txnType.type='TRANSFER'").toString();
+				"SELECT txn.bene_acc,count(*) as frequency,txnType.type as txnType ").append("FROM Transaction txn ")
+						.append("INNER JOIN Transaction_Type txnType ").append("ON txn.txn_type_id=txnType.id ")
+						.append("WHERE txn_timestamp BETWEEN ").append(dateRange)
+						.append("GROUP BY txn.bene_acc,txnType.type ").append("HAVING COUNT(txn.bene_acc) > 10 ")
+						.append(" AND txnType.type='TRANSFER'").toString();
 
 		try {
 			Connection connection = getDatabaseConnection(databaseName);
@@ -181,8 +183,8 @@ public class JdbcClient implements DatabaseClient {
 			ResultSet rs = statement.executeQuery(find_unusual_payers);
 			while (rs.next()) {
 				SuspiciousTransactionGroupModel suspiciousTransactionGroupModel = SuspiciousTransactionGroupModel
-						.builder().withBeneAccId(rs.getInt("bene_acc"))
-						.withFrequency(rs.getInt("frequency")).withTxnType(rs.getString("txnType")).build();
+						.builder().withBeneAccId(rs.getInt("bene_acc")).withFrequency(rs.getInt("frequency"))
+						.withTxnType(rs.getString("txnType")).build();
 				suspiciousTransactionGroups.add(suspiciousTransactionGroupModel);
 
 			}
@@ -196,16 +198,17 @@ public class JdbcClient implements DatabaseClient {
 	}
 
 	@Override
-	public List<SuspiciousTransactionGroupModel> findUnusualSmallFeeTransfer(String databaseName, String startDate, String twoWeekGroup) {
+	public List<SuspiciousTransactionGroupModel> findUnusualSmallFeeTransfer(String databaseName, String startDate,
+			String twoWeekGroup) {
 		List<SuspiciousTransactionGroupModel> suspiciousTransactionGroups = new ArrayList<>();
 		String dateRange = "DATE_SUB('" + startDate + "',INTERVAL " + twoWeekGroup + ") AND '" + startDate + "' ";
 
 		String find_unusual_payers = new StringBuilder(
-				"SELECT txn.orig_acc,count(*) as frequency,txnType.type as txnType ")
-				.append("FROM Transaction txn ").append("INNER JOIN Transaction_Type txnType ")
-				.append("ON txn.txn_type_id=txnType.id ").append("WHERE txn_amt < 200 AND  txn_timestamp BETWEEN ")
-				.append(dateRange).append("GROUP BY txn.orig_acc,txnType.type ")
-				.append("HAVING COUNT(txn.orig_acc) > 7 ").append(" AND txnType.type='TRANSFER'").toString();
+				"SELECT txn.orig_acc,count(*) as frequency,txnType.type as txnType ").append("FROM Transaction txn ")
+						.append("INNER JOIN Transaction_Type txnType ").append("ON txn.txn_type_id=txnType.id ")
+						.append("WHERE txn_amt < 200 AND  txn_timestamp BETWEEN ").append(dateRange)
+						.append("GROUP BY txn.orig_acc,txnType.type ").append("HAVING COUNT(txn.orig_acc) > 7 ")
+						.append(" AND txnType.type='TRANSFER'").toString();
 
 		try {
 			Connection connection = getDatabaseConnection(databaseName);
@@ -213,8 +216,8 @@ public class JdbcClient implements DatabaseClient {
 			ResultSet rs = statement.executeQuery(find_unusual_payers);
 			while (rs.next()) {
 				SuspiciousTransactionGroupModel suspiciousTransactionGroupModel = SuspiciousTransactionGroupModel
-						.builder().withBeneAccId(rs.getInt("orig_acc"))
-						.withFrequency(rs.getInt("frequency")).withTxnType(rs.getString("txnType")).build();
+						.builder().withBeneAccId(rs.getInt("orig_acc")).withFrequency(rs.getInt("frequency"))
+						.withTxnType(rs.getString("txnType")).build();
 				suspiciousTransactionGroups.add(suspiciousTransactionGroupModel);
 
 			}
@@ -228,16 +231,17 @@ public class JdbcClient implements DatabaseClient {
 	}
 
 	@Override
-	public List<TransactionModel> findTransactionBySenderAccountId(String databaseName, int origAccId, String txnType, String today, String groupDays) {
+	public List<TransactionModel> findTransactionBySenderAccountId(String databaseName, int origAccId, String txnType,
+			String today, String groupDays) {
 		List<TransactionModel> transactionModels = new ArrayList<>();
 		String dateRange = "DATE_SUB('" + today + "',INTERVAL " + groupDays + ") AND '" + today + "' ";
 
 		String find_transactions = new StringBuilder(
 				"SELECT txn.txn_id, txn.orig_acc, txn.bene_acc,txnType.type as txnType ")
-				.append("FROM Transaction txn ").append("INNER JOIN Transaction_Type txnType ")
-				.append("ON txn.txn_type_id=txnType.id ").append("WHERE txn_timestamp BETWEEN ")
-				.append(dateRange).append(" AND txn.orig_acc=")
-				.append(origAccId).append(" AND txnType.type='TRANSFER'").toString();
+						.append("FROM Transaction txn ").append("INNER JOIN Transaction_Type txnType ")
+						.append("ON txn.txn_type_id=txnType.id ").append("WHERE txn_timestamp BETWEEN ")
+						.append(dateRange).append(" AND txn.orig_acc=").append(origAccId)
+						.append(" AND txnType.type='TRANSFER'").toString();
 
 		try {
 			Connection connection = getDatabaseConnection(databaseName);
