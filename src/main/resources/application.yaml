@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    active: dev
+
+server:
+  port: 9090
+
+management:
+  server:
+    port: 9095
+  endpoints:
+    web:
+      base-path: /manage
+      exposure.include: "*"
+
+micro-db-generator:
+  dbServer:
+    host: //localhost
+    port: 3306
+    user: root
+    password: root
+
+
+---
+spring:
+  profiles:
+    - dev
+
+---
+spring:
+  profiles:
+    - prod
+

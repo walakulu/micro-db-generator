@@ -1,0 +1,127 @@
+---
+tables:
+  - tableName: Customer
+    tableType: TEMPORAL
+    isMainTable: FALSE
+    columns:
+      - columnName: cus_id
+        isNullable: false
+        dataType: VARCHAR(20)
+      - columnName: ssn
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: first_name
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: last_name
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: street_address
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: city
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: state
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: country
+        isNullable: false
+        dataType: VARCHAR(50)
+      - columnName: zip
+        isNullable: false
+        dataType: VARCHAR(10)
+      - columnName: gender
+        isNullable: false
+        dataType: VARCHAR(10)
+      - columnName: birth_date
+        isNullable: false
+        dataType: date
+    indexes:
+      - indexType: INDEX
+        indexName: cus_id_idx
+        columnName: cus_id
+  - tableName: Transaction
+    tableType: TEMPORAL
+    isMainTable: TRUE
+    columns:
+      - columnName: txn_id
+        isNullable: false
+        dataType: INT
+      - columnName: txn_amt
+        isNullable: false
+        dataType: DOUBLE
+      - columnName: orig_acc
+        isNullable: false
+        dataType: INT
+      - columnName: bene_acc
+        isNullable: false
+        dataType: INT
+      - columnName: txn_timestamp
+        isNullable: false
+        dataType: DATETIME
+      - columnName: txn_type_id
+        isNullable: false
+        dataType: INT
+    indexes:
+      - indexType: PRIMARY KEY
+        indexName: txn_id_idx
+        columnName: txn_id
+      - indexType: INDEX
+        indexName: wallet_id_a_idx
+        columnName: orig_acc
+      - indexType: INDEX
+        indexName: wallet_id_b_idx
+        columnName: bene_acc
+      - indexType: INDEX
+        indexName: txn_type_id_idx
+        columnName: txn_type_id
+  - tableName: Wallet
+    tableType: TEMPORAL
+    isMainTable: FALSE
+    columns:
+      - columnName: wallet_id
+        isNullable: false
+        dataType: INT
+      - columnName: type
+        isNullable: false
+        dataType: VARCHAR(10)
+      - columnName: wallet_status
+        isNullable: false
+        dataType: VARCHAR(10)
+      - columnName: currency_type
+        isNullable: false
+        dataType: VARCHAR(10)
+      - columnName: prior_sar_acc
+        isNullable: false
+        dataType: TINYINT
+      - columnName: open_dt
+        isNullable: false
+        dataType: DATETIME
+      - columnName: close_dt
+        isNullable: false
+        dataType: DATETIME
+      - columnName: initial_deposit
+        isNullable: false
+        dataType: DOUBLE
+      - columnName: cus_id
+        isNullable: false
+        dataType: VARCHAR(20)
+    indexes:
+      - indexType: INDEX
+        indexName: wallet_id_idx
+        columnName: wallet_id
+  - tableName: Transaction_Type
+    tableType: LOOKUP
+    isMainTable: FALSE
+    columns:
+      - columnName: id
+        isNullable: false
+        dataType: INT
+      - columnName: type
+        isNullable: false
+        dataType: VARCHAR(20)
+    indexes:
+      - indexType: PRIMARY KEY
+        indexName: txn_type_id_idx
+        columnName: id

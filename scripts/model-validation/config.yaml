@@ -1,0 +1,25 @@
+conf:
+  databases:
+    oltp:
+      db_name: online_bank
+      db_host: localhost
+      db_port: 3306
+      db_user: root
+      db_password: root
+    temporal:
+      - db_name: Txn7_Day_7
+        db_host: localhost
+        db_port: 3306
+        db_user: root
+        db_password: root
+      - db_name: Txn14_Day_14
+        db_host: localhost
+        db_port: 3306
+        db_user: root
+        db_password: root
+      - db_name: Txn28_Day_28
+        db_host: localhost
+        db_port: 3306
+        db_user: root
+        db_password: root
+  data_directory: data
