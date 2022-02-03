@@ -20,18 +20,66 @@ public class RuleGroupResource {
 	@Autowired
 	RuleGroupService ruleGroupService;
 
+	/**
+	 * <p>
+	 * Get the users who pay unusual frequency (given threshold) of payments for
+	 * goods/service within a week period.
+	 * </p>
+	 *
+	 * <p>
+	 * This pattern is expected to run on weekly fashion.But to reduce OLTP load, pattern
+	 * run on monthly basis and collect statistics by considering weekly timeframes.Which
+	 * means, this will produce 1 report for each week and bundle them and return as
+	 * monthly report.
+	 * </p>
+	 * @param databaseName name of the database
+	 * @return Suspicious reports covering a month time frame ( total reports= 1st week
+	 * report_ 2nd+..+4th week)
+	 */
 	@GetMapping("/databaseName/{databaseName}/unusualBuyers")
 	public SuspiciousReportsDto findUnusualPaymentsForGoodOrService(@PathVariable String databaseName) {
 
 		return ruleGroupService.findUnusualPaymentsForGoodOrService(databaseName);
 	}
 
+	/**
+	 * <p>
+	 * Get the users who receive unusual frequency (given threshold) of payments from same
+	 * or different users for weekly time period.
+	 * </p>
+	 *
+	 * <p>
+	 * This pattern is expected to run on weekly fashion.But to reduce OLTP load, pattern
+	 * run on monthly basis and collect statistics by considering weekly timeframes.Which
+	 * means, this will produce 1 report for each week and bundle them and return as
+	 * monthly report.
+	 * </p>
+	 * @param databaseName name of the database
+	 * @return Suspicious reports covering a month time frame ( total reports= 1st week
+	 * report_ 2nd+..+4th week)
+	 */
 	@GetMapping("/databaseName/{databaseName}/unusualReceivers")
 	public SuspiciousReportsDto findUnusualPaymentsReceive(@PathVariable String databaseName) {
 
 		return ruleGroupService.findUnusualPaymentsReceive(databaseName);
 	}
 
+	/**
+	 * <p>
+	 * Get the users who transfer unusual frequency (given threshold) of small amounts to
+	 * same or different users.
+	 * </p>
+	 *
+	 * <p>
+	 * This pattern is expected to run on 14 day fashion.But to reduce OLTP load, pattern
+	 * run on monthly basis and collect statistics by considering 2 week timeframes.Which
+	 * means, this will produce 1 report for each 14 days and bundle them and return as
+	 * monthly report.
+	 * </p>
+	 * @param databaseName name of the database
+	 * @return Suspicious reports covering a month time frame ( total reports=report for
+	 * 1st 14 day+ report for next 14 day)
+	 */
 	@GetMapping("/databaseName/{databaseName}/unusualSmallAmountSenders")
 	public SuspiciousReportsDto findUnusualSmallFeeTransfer(@PathVariable String databaseName) {
 
