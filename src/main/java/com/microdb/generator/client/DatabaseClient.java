@@ -27,4 +27,7 @@ public interface DatabaseClient {
 	List<TransactionModel> findTransactionBySenderAccountId(String databaseName, int origAccId, String txnType,
 			String today, String groupDays);
 
+	List<Integer> findDailyCashInFallowedCashOutUsers(String databaseName, String startDate,
+			int dayInTermsOfBackDaysFromToday);
+
 }

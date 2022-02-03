@@ -1,5 +1,6 @@
 package com.microdb.generator.resource;
 
+import com.microdb.generator.dto.modelValidation.SuspiciousReportDto;
 import com.microdb.generator.dto.modelValidation.SuspiciousReportsDto;
 import com.microdb.generator.service.DatabaseService;
 import com.microdb.generator.service.RuleGroupService;
@@ -35,6 +36,32 @@ public class RuleGroupResource {
 	public SuspiciousReportsDto findUnusualSmallFeeTransfer(@PathVariable String databaseName) {
 
 		return ruleGroupService.findUnusualSmallFeeTransfer(databaseName);
+	}
+
+	/**
+	 * <p>
+	 * This algorithm expected run on weekly fashion.It can identify suspicious records
+	 * for a week. starting from today.
+	 * </p>
+	 * <p>
+	 * Below are the algorithm steps:
+	 * <ol>
+	 * <li>Find accounts where CASH_IN fallowed by CASH_OUT ( same day or next day) for
+	 * each day starting from today.</li>
+	 * <li>Run algorithm for week and collect above records</li>
+	 * <li>Find frequency of days which each account fallowed this pattern (Ex: 1st day 2,
+	 * 2nd day 1.Total frequency =3)</li>
+	 * <li>Evaluate weather this frequency exceed the threshold value given by domain
+	 * expert.If then take as suspicious.</li>
+	 * </ol>
+	 * </p>
+	 * @param databaseName name of the database
+	 * @return suspiciousRecords for the week (excluding individual transaction details)
+	 */
+	@GetMapping("/databaseName/{databaseName}/cashInFallowedCashOutUsers")
+	public SuspiciousReportDto findUnusualCashInFallowedCashOutUsers(@PathVariable String databaseName) {
+
+		return ruleGroupService.findUnusualCashInFallowedCashOutUsers(databaseName);
 	}
 
 }

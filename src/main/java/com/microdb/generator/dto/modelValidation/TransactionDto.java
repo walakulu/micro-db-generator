@@ -2,7 +2,7 @@ package com.microdb.generator.dto.modelValidation;
 
 public class TransactionDto {
 
-	private int transactionId;
+	private final int transactionId;
 
 	private final int originatorAccountId;
 

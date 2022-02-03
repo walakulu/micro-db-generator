@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -142,6 +141,48 @@ public class RuleGroupServiceImpl implements RuleGroupService {
 		weeklyReportList.add(suspiciousReportForFirst2dWeeks);
 
 		return SuspiciousReportsDto.builder().withSuspiciousReports(weeklyReportList).build();
+	}
+
+	@Override
+	// This rule is expected run in weekly fashion and supporting to run only for last
+	// week.
+	public SuspiciousReportDto findUnusualCashInFallowedCashOutUsers(String databaseName) {
+		LocalDateTime today = LocalDateTime.parse(TODAY, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		String startDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		String endDate = today.minusDays(7).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		int THRESHOLD_FREQUENCY = 1;
+
+		Map<Integer, List<Integer>> weeklyResult = new HashMap<>();
+		Set<Integer> uniqueAccounts = new HashSet<>();
+		// Map<Integer,Integer> summaryFrequency=new HashMap<>();
+		List<SuspiciousDto> suspiciousDtoList = new ArrayList<>();
+		for (int i = 0; i <= 5; i++) {
+
+			List<Integer> cashInfallowedByCashOutAccounts = databaseClient
+					.findDailyCashInFallowedCashOutUsers(databaseName, startDate, i);
+			weeklyResult.put(i, cashInfallowedByCashOutAccounts);
+			uniqueAccounts.addAll(cashInfallowedByCashOutAccounts);
+		}
+
+		uniqueAccounts.forEach(acc -> {
+			int totalFrequency = 0;
+			for (int day : weeklyResult.keySet()) {
+				totalFrequency += Collections.frequency(weeklyResult.get(day), acc);
+			}
+			// put account in to suspicious list if it exceed the threshold frequency
+			// value for a week
+			if (totalFrequency > THRESHOLD_FREQUENCY) {
+				// summaryFrequency.put(acc,totalFrequency);
+				// we are not attaching transactions to make logic simpler
+				SuspiciousDto suspiciousDto = SuspiciousDto.builder().withAccountId(acc).withFrequency(totalFrequency)
+						.build();
+				suspiciousDtoList.add(suspiciousDto);
+			}
+
+		});
+
+		return SuspiciousReportDto.builder().withDateFrom(startDate).withDateTo(endDate)
+				.withSuspicions(suspiciousDtoList).build();
 	}
 
 	private SuspiciousReportDto findUnusualSmallFeeTransferReportForTwoWeeks(String databaseName, String startDate,

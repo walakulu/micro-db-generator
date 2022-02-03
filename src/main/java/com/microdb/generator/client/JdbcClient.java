@@ -263,4 +263,36 @@ public class JdbcClient implements DatabaseClient {
 		return transactionModels;
 	}
 
+	@Override
+	public List<Integer> findDailyCashInFallowedCashOutUsers(String databaseName, String startDate,
+			int dayInTermsOfBackDaysFromToday) {
+
+		List<Integer> userAccounts = new ArrayList<>();
+
+		String cashOutDate = "DATE_SUB('" + startDate + "',INTERVAL " + dayInTermsOfBackDaysFromToday + " DAY)";
+		String cashInDate = "DATE_SUB('" + startDate + "',INTERVAL " + (dayInTermsOfBackDaysFromToday + 1) + " DAY)";
+
+		String find_accounts = new StringBuilder("SELECT  txn.orig_acc ").append("FROM Transaction txn ")
+				.append("WHERE txn.txn_timestamp =").append(cashOutDate).append(" AND txn.txn_type_id=1 ")
+				.append("AND txn.orig_acc IN (").append(" SELECT  txn.orig_acc ").append(" FROM Transaction txn ")
+				.append(" WHERE txn.txn_timestamp BETWEEN ").append(cashInDate).append(" AND ").append(cashOutDate)
+				.append(" AND txn.txn_type_id=0 )").toString();
+
+		try {
+			Connection connection = getDatabaseConnection(databaseName);
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(find_accounts);
+			while (rs.next()) {
+				userAccounts.add(rs.getInt("orig_acc"));
+
+			}
+
+		}
+		catch (SQLException exception) {
+			throw new IllegalStateException("SQL Execution Exception Issue!!");
+		}
+
+		return userAccounts;
+	}
+
 }
