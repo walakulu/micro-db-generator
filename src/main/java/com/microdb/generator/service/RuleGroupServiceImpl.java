@@ -134,7 +134,7 @@ public class RuleGroupServiceImpl implements RuleGroupService {
 		startDate = startDate.minusDays(14);
 		String lastDayOf2ndWeek = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		String firstDayOf1stWeek = startDate.minusDays(14).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		SuspiciousReportDto suspiciousReportForFirst2dWeeks = findSuspiciousPaymentReceiveReportForWeek(databaseName,
+		SuspiciousReportDto suspiciousReportForFirst2dWeeks = findUnusualSmallFeeTransferReportForTwoWeeks(databaseName,
 				lastDayOf2ndWeek, firstDayOf1stWeek);
 
 		weeklyReportList.add(suspiciousReportForLast2Weeks);
@@ -192,8 +192,8 @@ public class RuleGroupServiceImpl implements RuleGroupService {
 
 		List<SuspiciousDto> suspiciousDtos = suspiciousTransactionGroups.stream().map(groupModel -> {
 			List<TransactionDto> transactions = getTransactionsBySenderAccountId(databaseName,
-					groupModel.getBeneAccId(), groupModel.getTxnType(), startDate, TWO_WEEK_GROUP);
-			SuspiciousDto suspiciousDto = SuspiciousDto.builder().withAccountId(groupModel.getBeneAccId())
+					groupModel.getOrigAccId(), groupModel.getTxnType(), startDate, TWO_WEEK_GROUP);
+			SuspiciousDto suspiciousDto = SuspiciousDto.builder().withAccountId(groupModel.getOrigAccId())
 					.withFrequency(groupModel.getFrequency()).withTransactions(transactions).build();
 
 			return suspiciousDto;

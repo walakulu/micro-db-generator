@@ -216,7 +216,7 @@ public class JdbcClient implements DatabaseClient {
 			ResultSet rs = statement.executeQuery(find_unusual_payers);
 			while (rs.next()) {
 				SuspiciousTransactionGroupModel suspiciousTransactionGroupModel = SuspiciousTransactionGroupModel
-						.builder().withBeneAccId(rs.getInt("orig_acc")).withFrequency(rs.getInt("frequency"))
+						.builder().withOrigAccId(rs.getInt("orig_acc")).withFrequency(rs.getInt("frequency"))
 						.withTxnType(rs.getString("txnType")).build();
 				suspiciousTransactionGroups.add(suspiciousTransactionGroupModel);
 
